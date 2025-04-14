@@ -9,9 +9,13 @@ use Exception;
 
 class CommentController extends BaseController
 {
-    public function index($blogId)
+    public function index(Request $request)
     {
         try {
+            $blogId = $request->input('blog_id');
+            if (!$blogId) {
+                return $this->sendError(null,'Blog ID is required.', false, config('const.VALIDATION_ERROR_CODE'));
+            }
             $comments = Comment::where('blog_id', $blogId)->with('user')->get();
             return $this->sendResponse($comments, 'Comments fetched successfully', true, config('const.SUCCESS_CODE'));
         } catch (Exception $e) {

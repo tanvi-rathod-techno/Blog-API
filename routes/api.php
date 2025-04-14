@@ -45,7 +45,7 @@ Route::prefix('v2')->group(function () {
 
      // COMMENT ROUTES
      Route::post('/comments', [CommentController::class, 'store']);
-     Route::get('/comments', [CommentController::class, 'index']);
+     Route::post('/get-comments', [CommentController::class, 'index']);
 
      // LIKE ROUTES
      Route::post('/likes', [LikeController::class, 'store']);

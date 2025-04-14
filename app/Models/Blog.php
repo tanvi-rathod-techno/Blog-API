@@ -17,7 +17,7 @@ class Blog extends Model
         'status',
     ];
 
-    protected $appends = ['total_likes', 'liked_by_user'];
+    protected $appends = ['total_likes', 'liked_by_user', 'total_comments'];
 
 
     public function getTotalLikesAttribute()
@@ -28,10 +28,16 @@ class Blog extends Model
     public function getLikedByUserAttribute()
     {
         $userId = auth()->id();
-      
+
 
         return $this->likes()->where('user_id', $userId)->exists();
     }
+
+    public function getTotalCommentsAttribute()
+    {
+        return $this->comments()->count();
+    }
+
 
      // A blog belongs to a user (author)
      public function user()

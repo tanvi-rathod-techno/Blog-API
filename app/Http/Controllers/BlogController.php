@@ -27,26 +27,37 @@ class BlogController extends BaseController
 
     public function store(Request $request)
     {
+        // Validate the request data
         $request->validate([
             'blog_title'   => 'required|string|max:255',
             'blog_content' => 'required|string',
             'blog_tagline' => 'nullable|string',
+            'image'         => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         DB::beginTransaction();
         try {
+            // Handle image upload if present
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imagePath = $image->store('blogs', 'public'); // Store in 'public/blogs' folder
+            }
+
+            // Create the blog post
             $blog = Blog::create([
                 'blog_title'   => $request->blog_title,
                 'blog_content' => $request->blog_content,
                 'blog_tagline' => $request->blog_tagline,
                 'user_id'      => auth()->id(),
+                'image_path'   => $imagePath, // Save the image path to the database
             ]);
 
             DB::commit();
-            return $this->sendResponse($blog, 'Blog created successfully',true,config('const.SUCCESS_CODE'));
+            return $this->sendResponse($blog, 'Blog created successfully', true, config('const.SUCCESS_CODE'));
         } catch (Exception $ex) {
             DB::rollback();
-            return $this->sendError(null, 'Failed to create blog. Error: ' . $ex->getMessage(), false,  config('const.EXCEPTION_ERROR_CODE'));
+            return $this->sendError(null, 'Failed to create blog. Error: ' . $ex->getMessage(), false, config('const.EXCEPTION_ERROR_CODE'));
         }
     }
 

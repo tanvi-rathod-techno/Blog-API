@@ -15,6 +15,7 @@ class Blog extends Model
         'blog_tagline',
         'blog_content',
         'status',
+        'image_path'
     ];
 
     protected $appends = ['total_likes', 'liked_by_user', 'total_comments'];
